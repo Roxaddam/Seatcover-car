@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CC Admin | Mobile Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary: #4f46e5; --bg: #f3f4f6; --card: #ffffff; --text: #111827; --text-light: #6b7280; --danger: #ef4444; --edit: #10b981; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); padding-bottom: 80px; }
+        #loginScreen { position: fixed; inset: 0; background: #fff; z-index: 1000; display: {% if logged_in %}none{% else %}flex{% endif %}; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+        .login-input { width: 100%; padding: 16px; margin: 8px 0; border: 2px solid #eee; border-radius: 16px; outline: none; }
+        .login-btn { width: 100%; background: var(--primary); color: white; padding: 18px; border-radius: 16px; border: none; font-weight: 800; margin-top: 20px; }
+        header { padding: 25px 20px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center; }
+        .product-card { background: white; border-radius: 20px; padding: 15px; margin: 10px 20px; display: flex; gap: 15px; align-items: center; border: 1px solid #eee; }
+        .p-img { width: 70px; height: 70px; border-radius: 14px; object-fit: cover; }
+        .action-btns { display: flex; gap: 8px; }
+        .del-btn, .edit-btn { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 0.9rem; }
+        .del-btn { background: #fee2e2; color: var(--danger); }
+        .edit-btn { background: #d1fae5; color: var(--edit); border: none; cursor: pointer; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 500; display: none; align-items: flex-end; }
+        .modal-content { background: white; width: 100%; border-radius: 30px 30px 0 0; padding: 30px 25px; max-height: 90vh; overflow-y: auto; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-size: 0.75rem; font-weight: 800; color: var(--text-light); text-transform: uppercase; display: block; margin-bottom: 6px; }
+        .form-group input, .form-group select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #f9fafb; font-size: 1rem; }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #e5e7eb; }
+        .btn-main { background: var(--primary); color: white; width: 100%; padding: 16px; border-radius: 16px; font-weight: 800; border: none; }
+    </style>
+</head>
+<body>
+    <div id="loginScreen">
+        <h1 style="font-weight:900;">CAR CORALS</h1>
+        {% with messages = get_flashed_messages() %}{% if messages %}{% for message in messages %}<p style="color:var(--danger); font-weight:700;">{{ message }}</p>{% endfor %}{% endif %}{% endwith %}
+        <form action="/admin" method="POST" style="width:100%">
+            <input type="text" name="user" class="login-input" placeholder="User ID" required>
+            <input type="password" name="pass" class="login-input" placeholder="Password" required>
+            <button type="submit" class="login-btn">Enter Dashboard</button>
+        </form>
+    </div>
+
+    <header><h1>Inventory</h1><a href="/logout" style="color:var(--danger); font-weight:700; text-decoration:none;">Logout</a></header>
+
+    {% for p in products %}
+    <div class="product-card">
+        <img src="{{ p.img1 }}" class="p-img">
+        <div style="flex:1;">
+            <h3>{{ p.car_brand }} {{ p.car_name }}</h3>
+            <p>#{{ p.custom_id }} • {{ p.brand }}</p>
+        </div>
+        <div class="action-btns">
+            <button class="edit-btn" onclick="openEditModal('{{ p.id }}', '{{ p.brand }}', '{{ p.car_brand }}', '{{ p.car_name }}', '{{ p.model }}', '{{ p.price }}', '{{ p.stock }}', '{{ p.img1 }}', '{{ p.img2 }}', '{{ p.img3 }}')">
+                <i class="fas fa-edit"></i>
+            </button>
+            <a href="/delete/{{ p.id }}" class="del-btn" onclick="return confirm('Delete this?')"><i class="fas fa-trash"></i></a>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div id="addModal" class="modal"><div class="modal-content">
+        <form action="/add" method="POST">
+            <h2 style="margin-bottom:20px;">Add New Product</h2>
+            <div class="form-group"><label>Brand</label>
+                <select name="brand" id="brandSelect" onchange="toggleCustomBrand('brandSelect', 'customBrandInput')">
+                    <option value="Autoform">Autoform</option>
+                    <option value="Top Gear">Top Gear</option>
+                    <option value="NEW">+ Add New Brand</option>
+                </select>
+                <input type="text" name="custom_brand_name" id="customBrandInput" placeholder="Type Brand Name..." style="display:none; margin-top:10px;">
+            </div>
+            <div class="form-group"><label>Car Brand</label><input type="text" name="car_brand" required></div>
+            <div class="form-group"><label>Car Name</label><input type="text" name="car_name" required></div>
+            <div class="form-group"><label>Model Style</label><input type="text" name="model"></div>
+            <div class="form-group"><label>Price (₹)</label><input type="number" name="price"></div>
+            <div class="form-group"><label>Stock</label><select name="stock"><option value="true">In Stock</option><option value="false">Out</option></select></div>
+            <div class="form-group"><label>Images</label><input type="text" name="img1" placeholder="URL 1" required><input type="text" name="img2" placeholder="URL 2" style="margin-top:5px"><input type="text" name="img3" placeholder="URL 3" style="margin-top:5px"></div>
+            <button type="submit" class="btn-main">Publish Item</button>
+            <button type="button" onclick="closeModal('addModal')" style="width:100%; border:none; background:none; margin-top:10px;">Cancel</button>
+        </form>
+    </div></div>
+
+    <div id="editModal" class="modal"><div class="modal-content">
+        <form id="editForm" method="POST">
+            <h2 style="margin-bottom:20px;">Edit Product</h2>
+            <div class="form-group"><label>Brand</label>
+                <select name="brand" id="editBrandSelect" onchange="toggleCustomBrand('editBrandSelect', 'editCustomBrandInput')">
+                    <option value="Autoform">Autoform</option>
+                    <option value="Top Gear">Top Gear</option>
+                    <option value="NEW">+ Add New Brand</option>
+                </select>
+                <input type="text" name="custom_brand_name" id="editCustomBrandInput" placeholder="Type Brand Name..." style="display:none; margin-top:10px;">
+            </div>
+            <div class="form-group"><label>Car Brand</label><input type="text" name="car_brand" id="edit_car_brand" required></div>
+            <div class="form-group"><label>Car Name</label><input type="text" name="car_name" id="edit_car_name" required></div>
+            <div class="form-group"><label>Model Style</label><input type="text" name="model" id="edit_model"></div>
+            <div class="form-group"><label>Price (₹)</label><input type="number" name="price" id="edit_price"></div>
+            <div class="form-group"><label>Stock</label><select name="stock" id="edit_stock"><option value="true">In Stock</option><option value="false">Out</option></select></div>
+            <div class="form-group"><label>Images</label>
+                <input type="text" name="img1" id="edit_img1" placeholder="URL 1" required>
+                <input type="text" name="img2" id="edit_img2" placeholder="URL 2" style="margin-top:5px">
+                <input type="text" name="img3" id="edit_img3" placeholder="URL 3" style="margin-top:5px">
+            </div>
+            <button type="submit" class="btn-main">Update Product</button>
+            <button type="button" onclick="closeModal('editModal')" style="width:100%; border:none; background:none; margin-top:10px;">Cancel</button>
+        </form>
+    </div></div>
+
+    <nav class="bottom-nav">
+        <button onclick="location.href='/'" style="border:none; background:none;"><i class="fas fa-eye"></i><br>Site</button>
+        <button onclick="document.getElementById('addModal').style.display='flex'" style="border:none; background:none; color:var(--primary);"><i class="fas fa-plus-circle" style="font-size:1.5rem"></i><br>Add</button>
+    </nav>
+
+    <script>
+        function toggleCustomBrand(selectId, inputId) {
+            const select = document.getElementById(selectId);
+            const input = document.getElementById(inputId);
+            input.style.display = (select.value === "NEW") ? "block" : "none";
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openEditModal(id, brand, car_brand, car_name, model, price, stock, img1, img2, img3) {
+            // Set the form action URL dynamically
+            document.getElementById('editForm').action = '/edit/' + id;
+            
+            // Fill existing values
+            document.getElementById('edit_car_brand').value = car_brand;
+            document.getElementById('edit_car_name').value = car_name;
+            document.getElementById('edit_model').value = model;
+            document.getElementById('edit_price').value = price;
+            document.getElementById('edit_stock').value = stock.toLowerCase();
+            document.getElementById('edit_img1').value = img1;
+            document.getElementById('edit_img2').value = img2;
+            document.getElementById('edit_img3').value = img3;
+
+            // Handle Brand Selection
+            const brandSelect = document.getElementById('editBrandSelect');
+            const customInput = document.getElementById('editCustomBrandInput');
+            
+            if (brand === "Autoform" || brand === "Top Gear") {
+                brandSelect.value = brand;
+                customInput.style.display = "none";
+            } else {
+                brandSelect.value = "NEW";
+                customInput.value = brand;
+                customInput.style.display = "block";
+            }
+
+            // Show the modal
+            document.getElementById('editModal').style.display = 'flex';
+        }
+    </script>
+</body>
+                                                                                    </html>
+
