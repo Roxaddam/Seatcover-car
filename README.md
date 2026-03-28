@@ -1,2 +1,0 @@
-# Seatcover-car
-Hiiiiiiiii
