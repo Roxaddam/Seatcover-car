@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAR CORALS | Premium Seatcovers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --bg-light: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --whatsapp: #25d366;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: #1e293b;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            box-shadow: var(--shadow);
+            border-radius:30px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0f172a;
+        }
+
+        .logo i {
+            color: var(--primary);
+            background: #eef2ff;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        /* --- SLIDER --- */
+        .slider-container {
+            width: 100%;
+            height: 450px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide.active { opacity: 1; }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slide-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        /* --- FILTER BOX --- */
+        .filter-section {
+            max-width: 1100px;
+            margin: -60px auto 40px;
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        .filter-box {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; }
+
+        .input-group label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #64748b;
+            letter-spacing: 0.05em;
+        }
+
+        select, button#searchBtn {
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+        #searchBtn {
+            background: var(--primary);
+            color:#4338ca;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            max-width: 71.5vw;
+        }
+
+        #searchBtn:hover { transform: translateY(-2px); background: #4338ca;color:white; }
+
+        /* --- CARDS --- */
+        .inventory {
+            max-width: 1200px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
+
+        .product-id {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            z-index: 5;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Mini Slider Styling */
+        .card-img { height: 200px; position: relative; overflow: hidden; background: #f1f5f9; }
+        .card-slider-wrapper { display: flex; height: 100%; transition: transform 0.4s ease-in-out; }
+        .card-slider-wrapper img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
+        .slider-nav { position: absolute; top: 50%; width: 100%; display: flex; justify-content: space-between; padding: 0 10px; transform: translateY(-50%); opacity: 0; transition: 0.3s; }
+        .card:hover .slider-nav { opacity: 1; }
+        .slider-nav button { background: rgba(255, 255, 255, 0.8); border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+
+        .card-body { padding: 24px; }
+        .car-brand-tag { font-size: 0.7rem; font-weight: 800; color: var(--primary); background: #eef2ff; padding: 4px 10px; border-radius: 6px; }
+        .car-name { font-size: 1.25rem; font-weight: 700; margin: 10px 0 15px; }
+
+        .details-box {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column; gap: 8px; font-size: 0.9rem; margin-bottom: 20px;
+        }
+
+        .detail-row { display: flex; justify-content: space-between; }
+        .label { color: #64748b; }
+        .val { font-weight: 600; }
+        .price { color: var(--primary); font-size: 1.1rem; border-top: 1px solid #e2e8f0; padding-top: 8px; margin-top: 5px; }
+        
+        .stock-tag { font-weight: 700; font-size: 0.75rem; text-transform: uppercase; }
+        .in-stock { color: #10b981; }
+        .out-stock { color: #f43f5e; }
+
+        .query-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; background: var(--whatsapp); color: white; text-decoration: none; padding: 14px; border-radius: 14px; font-weight: 700; font-size: 0.9rem; transition: all 0.3s; border: none; cursor: pointer;
+        }
+
+        .query-btn:hover { background: #1ea952; transform: scale(1.02); }
+  .logoimg{
+      height:40px;
+      width:40px;
+      border-radius:50%;
+      object-fit: cover;
+  }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <img src="https://cdn.discordapp.com/attachments/1487418599877640377/1487424001675624519/IMG_5582.jpg?ex=69c9170d&is=69c7c58d&hm=393a6c4e169a84a3d1984065dc3ddcde007100c86d6be0755e6d12123569fe8d&" class="logoimg">
+            CAR CORALS
+        </div>
+        <div>
+            <i class="fas fa-bars" style="font-size: 1.2rem; cursor: pointer;"></i>
+        </div>
+    </nav>
+
+    <div class="slider-container">
+        <div class="slide active">
+            <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=1200" alt="Slider 1">
+            <div class="slide-overlay"><h1>Luxury Autoform Collection</h1></div>
+        </div>
+        <div class="slide">
+            <img src="https://images.unsplash.com/photo-1594731802114-03994285b560?q=80&w=1200" alt="Slider 2">
+            <div class="slide-overlay"><h1>Durable Top Gear Protection</h1></div>
+        </div>
+        <div class="slide">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200" alt="Slider 3">
+            <div class="slide-overlay"><h1>Custom Fit for Every Journey</h1></div>
+        </div>
+    </div>
+
+    <section class="filter-section">
+        <div class="filter-box">
+            <div class="input-group">
+                <label>Seatcover Brand</label>
+                <select id="scBrand">
+                    <option value="all">All Brands</option>
+                    {% for b in sc_brands %}
+                    <option value="{{ b }}">{{ b }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Car Brand</label>
+                <select id="carBrand">
+                    <option value="all">All Brands</option>
+                    {% for cb in car_brands %}
+                    <option value="{{ cb }}">{{ cb }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Car Name</label>
+                <select id="carName">
+                    <option value="all">All Names</option>
+                    {% for cn in car_names %}
+                    <option value="{{ cn }}">{{ cn }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Model Style</label>
+                <select id="scModel">
+                    <option value="all">All Styles</option>
+                    {% for m in models %}
+                    <option value="{{ m }}">{{ m }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button id="searchBtn">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </div>
+    </section>
+
+    <div class="inventory" id="inventoryGrid">
+        {% for item in products %}
+        <div class="card">
+            <div class="product-id">#{{ item.custom_id }}</div>
+            <div class="card-img" id="slider-{{ item.id }}">
+                <div class="card-slider-wrapper" style="transform: translateX(0%);">
+                    <img src="{{ item.img1 }}" alt="Seatcover Photo 1">
+                    <img src="{{ item.img2 }}" alt="Seatcover Photo 2">
+                    <img src="{{ item.img3 }}" alt="Seatcover Photo 3">
+                </div>
+                <div class="slider-nav">
+                    <button onclick="moveSlide('{{ item.id }}', -1)"><i class="fas fa-chevron-left"></i></button>
+                    <button onclick="moveSlide('{{ item.id }}', 1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <span class="car-brand-tag">{{ item.brand }}</span>
+                <h3 class="car-name">{{ item.car_brand }} {{ item.car_name }}</h3>
+                <div class="details-box">
+                    <div class="detail-row"><span class="label">Model:</span><span class="val">{{ item.model }}</span></div>
+                    <div class="detail-row"><span class="label">Fitment:</span><span class="val">{{ item.fitment }}</span></div>
+                    <div class="detail-row"><span class="label">Status:</span>
+                        <span class="stock-tag {{ 'in-stock' if item.stock else 'out-stock' }}">
+                            {{ 'In Stock' if item.stock else 'Out of Stock' }}
+                        </span>
+                    </div>
+                    <div class="detail-row price"><span class="label">Price:</span><span class="val">₹{{ item.price }}</span></div>
+                </div>
+                <button class="query-btn" onclick="sendWhatsApp('{{ item.custom_id }}', '{{ item.brand }}', '{{ item.car_brand }} {{ item.car_name }}', '{{ item.model }}', '{{ item.price }}')">
+                    <i class="fab fa-whatsapp"></i> Query on WhatsApp
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function sendWhatsApp(id, brand, car, model, price) {
+            const phone = "919734752040";
+            const message = `Hello Car Corals, I am interested in:\n\n[\n ID: #${id}\n Brand: ${brand}\n Car: ${car}\n Model: ${model}\n Price: ₹${price}\n]`;
+            const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        const sliderStates = {};
+        function moveSlide(id, direction) {
+            if (!sliderStates[id]) sliderStates[id] = 0;
+            const wrapper = document.querySelector(`#slider-${id} .card-slider-wrapper`);
+            const slideCount = wrapper.querySelectorAll('img').length;
+            sliderStates[id] = (sliderStates[id] + direction + slideCount) % slideCount;
+            wrapper.style.transform = `translateX(-${sliderStates[id] * 100}%)`;
+        }
+
+        let currentHeroSlide = 0;
+        const heroSlides = document.querySelectorAll('.slide');
+        setInterval(() => {
+            heroSlides[currentHeroSlide].classList.remove('active');
+            currentHeroSlide = (currentHeroSlide + 1) % heroSlides.length;
+            heroSlides[currentHeroSlide].classList.add('active');
+        }, 4000);
+
+        // SYNCED SEARCH SCRIPT
+        document.getElementById('searchBtn').addEventListener('click', () => {
+            const scBrand = document.getElementById('scBrand').value;
+            const carBrand = document.getElementById('carBrand').value;
+            const carName = document.getElementById('carName').value;
+            const scModel = document.getElementById('scModel').value;
+            
+            const params = new URLSearchParams();
+            if (scBrand !== 'all') params.append('scBrand', scBrand);
+            if (carBrand !== 'all') params.append('carBrand', carBrand);
+            if (carName !== 'all') params.append('carName', carName);
+            if (scModel !== 'all') params.append('scModel', scModel);
+            
+            window.location.href = `/?${params.toString()}`;
+        });
+    </script>
+</body>
+                      </html>
+                      
