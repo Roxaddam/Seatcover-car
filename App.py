@@ -68,7 +68,7 @@ def admin():
     if request.method == 'POST':
         user = request.form.get('user')
         pw = request.form.get('pass')
-        if user == "admin" and pw == "9434":
+        if user == "carcorals@car" and pw == "9734752040":
             session['admin_logged_in'] = True
             return redirect(url_for('admin'))
         else:
